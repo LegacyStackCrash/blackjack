@@ -27,7 +27,32 @@
     </style>
 </head>
 <body class="bg-gray-900">
-    <main class="w-screen h-screen">
+    <nav class="flex items-center justify-between flex-wrap bg-black p-1">
+        <div class="flex items-center text-white mr-6">
+            <a href="{{ url('/') }}" class="text-3xl hover:text-yellow-200" style="font-family: 'Dancing Script', cursive;">
+                {{ config('app.name', 'Blackjack') }}
+            </a>
+        </div>
+        <div class="text-white">
+            @guest
+                <a class="mr-6 hover:text-red-500" href="{{ route('login') }}">{{ __('Login') }}</a> 
+                @if (Route::has('register'))
+                    <a class="mr-6 hover:text-green-500" href="{{ route('register') }}">{{ __('Register') }}</a>
+                @endif
+            @else
+                <a class="mr-6 hover:text-red-500" href="{{ route('logout') }}"
+                    onclick="event.preventDefault();
+                                    document.getElementById('logout-form').submit();">
+                    {{ __('Logout') }}
+                </a>
+
+                <form id="logout-form" action="{{ route('logout') }}" method="POST" style="display: none;">
+                    @csrf
+                </form>
+            @endguest
+        </div>
+    </nav>
+    <main id="app">
         @yield('content')
     </main>
 </body>

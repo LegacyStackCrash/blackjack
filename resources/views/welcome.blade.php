@@ -44,7 +44,7 @@
             @endif
         </nav>
         <main class="flex flex-grow items-center justify-center">
-            Blackjack
+            <span class="hover:text-yellow-200">Blackjack</span>
         </main>
         <footer class="flex text-pink-300 text-xs pb-1 pr-3 justify-end">
             Created By: Harden Wallace
