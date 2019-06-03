@@ -1,4 +1,6 @@
 <?php
+use App\Events\NewLobbyChatMessage;
+use App\EventObjects\ChatMessage;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +16,13 @@
 Route::get('/', function () {
     return view('welcome');
 });
+
+Route::get('/testr', function () {
+    $chatMessage = new ChatMessage(['message' => "Hello, World!"]);
+    event((new NewLobbyChatMessage($chatMessage)));
+});
+
+Route::post('/lobby/message', 'ChatController@LobbyChatMessage');
 
 Auth::routes();
 

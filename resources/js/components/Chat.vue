@@ -1,7 +1,13 @@
 <template>
   <div class="flex flex-col">
-    <ul class="h-64 bg-yellow-100 rounded border-solid border-2 border-black overflow-y-auto">
-      <li v-for="message in messages" :key="message.id">{{ message.user }}: {{ message.message }}</li>
+    <ul
+      id="chatWindow"
+      class="h-64 bg-yellow-100 rounded border-solid border-2 border-black overflow-y-auto"
+    >
+      <li
+        v-for="(message, index) in messages"
+        :key="index"
+      >{{ message.user }}: {{ message.message }}</li>
     </ul>
     <div class="flex flex-row mt-1">
       <input
@@ -9,8 +15,13 @@
         type="text"
         name="message"
         id="message"
+        v-model="message"
+        @keyup.enter="sendChatMessage"
       >
-      <button class="bg-blue-700 hover:bg-blue-500 p-2 ml-1 rounded text-white">Send</button>
+      <button
+        class="bg-blue-700 hover:bg-blue-500 p-2 ml-1 rounded text-white"
+        @click="sendChatMessage"
+      >Send</button>
     </div>
   </div>
 </template>
@@ -19,67 +30,35 @@
 export default {
   data() {
     return {
-      messages: [
-        {
-          id: 1,
-          user: "Random Person 1",
-          message: "Test Message 1"
-        },
-        {
-          id: 2,
-          user: "Random Person 2",
-          message: "Test Message 2"
-        },
-        {
-          id: 3,
-          user: "Random Person 3",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        },
-        {
-          id: 4,
-          user: "Random Person 4",
-          message: "Test Message 4"
-        }
-      ]
+      message: "",
+      messages: []
     };
   },
+  methods: {
+    sendChatMessage() {
+      if (this.message.trim() != "") {
+        axios
+          .post("/lobby/message", {
+            message: this.message
+          })
+          .then(() => {
+            this.message = "";
+          });
+      }
+    }
+  },
   mounted() {
-    console.log("Chat Mounted");
+    Echo.channel("lobby").listen("NewLobbyChatMessage", e => {
+      this.messages.push({
+        message: e.chatMessage.message,
+        user: e.chatMessage.user
+      });
+
+      this.$nextTick(() => {
+        let chatWindow = document.getElementById("chatWindow");
+        chatWindow.scrollTop = chatWindow.scrollHeight;
+      });
+    });
   }
 };
 </script>
